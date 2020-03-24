@@ -1,0 +1,32 @@
+import javafx.application.Application;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+public class Runner extends Application {
+
+    private Pane root;
+    private CheckerBoard board;
+
+    private Parent setUpScene() {
+        root = new Pane();
+        double TILE_WIDTH = 80;
+        double TILE_HEIGHT = 80;
+
+        board = new CheckerBoard(TILE_WIDTH, TILE_HEIGHT);
+
+        root.getChildren().addAll(board);
+        return root;
+    }
+
+    public void start(Stage primaryStage) {
+        primaryStage.setScene(new Scene(setUpScene()));
+        primaryStage.setTitle("Checkers");
+        primaryStage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
