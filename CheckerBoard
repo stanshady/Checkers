@@ -1,0 +1,61 @@
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+
+public class CheckerBoard extends Pane {
+
+    private final double TILE_WIDTH, TILE_HEIGHT;
+    private Tile[][] board;
+
+    // Constructor
+    CheckerBoard(double tileWidth, double tileHeight) {
+        TILE_WIDTH = tileWidth;
+        TILE_HEIGHT = tileHeight;
+        setPrefSize(8 * TILE_WIDTH, 8 * TILE_HEIGHT);
+
+        setUpBoard();
+    }
+
+    // setUpBoard() initializes board into standard starting position.
+    // Currently has blackPawns on bottom.
+    public void setUpBoard() {
+        board = new Tile[8][8];
+
+        // Populate the board with all blank tiles
+        // and checkerboard background
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+
+                Tile tile = new Tile(TILE_WIDTH, TILE_HEIGHT, board);
+                tile.setTranslateX(col * TILE_WIDTH);
+                tile.setTranslateY(row * TILE_HEIGHT);
+
+                // Set checkerboard pattern background
+                if ((row + col) % 2 == 1)
+                    tile.setBackground();
+
+                board[row][col] = tile;
+                getChildren().addAll(tile);
+            }
+        }
+
+        // Fill in red pawns
+        for (int row = 0; row < 3; row++) {
+            int col = 0;
+            if (row % 2 == 0)
+                col = 1;
+            for (; col < 8; col += 2) {
+                board[row][col].drawPawn(Color.RED);
+            }
+        }
+
+        // Fill in black pawns
+        for (int row = 5; row < 8; row++) {
+            int col = 0;
+            if (row % 2 == 0)
+                col = 1;
+            for (; col < 8; col += 2) {
+                board[row][col].drawPawn(Color.BLACK);
+            }
+        }
+    }
+}
