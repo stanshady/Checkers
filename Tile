@@ -1,0 +1,64 @@
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Rectangle;
+
+public class Tile extends StackPane {
+
+    private final double TILE_WIDTH, TILE_HEIGHT;
+
+    // I am passing board (the private Tile[][] from CheckerBoard class)
+    // to each tile so that the tiles can easily call
+    // global methods on the board such as isLegal().
+    // There is probably a better way to do this.  One way is to
+    // make lots of things static in the Checkerboard class but I find
+    // this to be messy.  Let me know if you have a better way.
+    private Tile[][] board;
+
+    // pawnColor is data for three things:
+    // 1) Is the tile empty? (pawnColor = null)
+    // 2) Is the tile Red?
+    // 3) Is the tile Black?
+    private Color pawnColor;
+
+    private boolean king;
+
+    // Constructor
+    Tile(double tileWidth, double tileHeight, Tile[][] board) {
+        TILE_WIDTH = tileWidth;
+        TILE_HEIGHT = tileHeight;
+        this.board = board;
+        pawnColor = null;
+        king = false;
+
+        // boarder around each tile
+        Rectangle boarder = new Rectangle(getTranslateX(),
+                getTranslateY(),
+                TILE_WIDTH,
+                TILE_WIDTH);
+        boarder.setFill(null);
+        boarder.setStroke(Color.BLACK);
+        getChildren().addAll(boarder);
+    }
+
+    // Adds a background to certain tiles ((row + col % 2) == 1)
+    // to achieve checkerboard pattern.
+    public void setBackground() {
+        BackgroundFill background_fill = new BackgroundFill(Color.LIGHTGRAY,
+                CornerRadii.EMPTY, Insets.EMPTY);
+        Background background = new Background(background_fill);
+        setBackground(background);
+    }
+
+    // drawPawn() fills in tile with appropriate pawn color (including null)
+    public void drawPawn(Color pawnColor) {
+        this.pawnColor = pawnColor;
+        Ellipse ellipse = new Ellipse(TILE_WIDTH * 0.4, TILE_HEIGHT * 0.4);
+        ellipse.setFill(pawnColor);
+        getChildren().addAll(ellipse);
+    }
+}
