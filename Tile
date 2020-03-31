@@ -1,3 +1,5 @@
+package Checkers;
+
 import javafx.geometry.Insets;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -11,31 +13,84 @@ public class Tile extends StackPane {
 
     private final double TILE_WIDTH, TILE_HEIGHT;
 
-    // I am passing board (the private Tile[][] from CheckerBoard class)
+    // I am passing checkerBoard
     // to each tile so that the tiles can easily call
     // global methods on the board such as isLegal().
     // There is probably a better way to do this.  One way is to
     // make lots of things static in the Checkerboard class but I find
     // this to be messy.  Let me know if you have a better way.
-    private Tile[][] board;
+    private CheckerBoard checkerBoard;
 
-    // pawnColor is data for three things:
-    // 1) Is the tile empty? (pawnColor = null)
-    // 2) Is the tile Red?
-    // 3) Is the tile Black?
+
     private Color pawnColor;
+
+    private Ellipse pawn;
+
 
     private boolean king;
 
     // Constructor
-    Tile(double tileWidth, double tileHeight, Tile[][] board) {
+    Tile(double tileWidth, double tileHeight, CheckerBoard checkerBoard) {
         TILE_WIDTH = tileWidth;
         TILE_HEIGHT = tileHeight;
-        this.board = board;
+        this.checkerBoard = checkerBoard;
         pawnColor = null;
         king = false;
 
-        // boarder around each tile
+
+        pawn = new Ellipse(TILE_WIDTH*0.4,TILE_HEIGHT*0.4);
+        pawn.setFill(null);
+        getChildren().addAll(pawn);
+
+        makeBoarder();
+
+        // Set mouse clicks:
+
+        setOnMouseClicked(event -> {
+            // Logic for initial click (pawnClicked == false)
+            if (!checkerBoard.isPawnClicked()) {
+                if (isEmpty()) {
+   //
+                    System.out.println(checkerBoard.isPawnClicked());
+
+                    return;
+                }
+                else {
+                    checkerBoard.setPawnClicked(true);
+    //
+                    System.out.println(checkerBoard.isPawnClicked());
+                    // initClickedTiles() constructs new ArrayList
+                    checkerBoard.initClickedTiles();
+                    checkerBoard.getClickedTiles().add(this);
+    //
+                    System.out.println(checkerBoard.getClickedTiles().size());
+                }
+            }
+            // Logic for non-initial clicks (pawnClicked == true)
+            else {
+                // Check if this is the second click
+                if(checkerBoard.getClickedTiles().size() == 1){
+    //
+                    System.out.println("Hey.");
+                    Tile firstClicked = checkerBoard.getClickedTiles().get(0);
+                    pawn.setFill(firstClicked.getPawnColor());
+                    firstClicked.setPawnColor(null);
+                    checkerBoard.setPawnClicked(false);
+                }
+
+                // This is a multi-jump click
+                else{
+                    checkerBoard.setPawnClicked(false);
+                }
+
+
+            }
+
+        });
+    }
+
+    // Creates a black boarder around each tile
+    private void makeBoarder() {
         Rectangle boarder = new Rectangle(getTranslateX(),
                 getTranslateY(),
                 TILE_WIDTH,
@@ -54,11 +109,16 @@ public class Tile extends StackPane {
         setBackground(background);
     }
 
-    // drawPawn() fills in tile with appropriate pawn color (including null)
-    public void drawPawn(Color pawnColor) {
+    public Color getPawnColor(){
+        return pawnColor;
+    }
+
+    public void setPawnColor(Color pawnColor){
         this.pawnColor = pawnColor;
-        Ellipse ellipse = new Ellipse(TILE_WIDTH * 0.4, TILE_HEIGHT * 0.4);
-        ellipse.setFill(pawnColor);
-        getChildren().addAll(ellipse);
+        pawn.setFill(pawnColor);
+    }
+
+    public boolean isEmpty() {
+        return pawnColor == null;
     }
 }
