@@ -1,10 +1,23 @@
+package Checkers;
+
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+
+import java.util.ArrayList;
 
 public class CheckerBoard extends Pane {
 
     private final double TILE_WIDTH, TILE_HEIGHT;
     private Tile[][] board;
+
+    // pawnClicked is used to coordinate moves between tiles.
+    // Default state = false.
+    // Set to true when a pawn is clicked.  This is used
+    // by isLegal() and others?
+    private boolean pawnClicked;  // change this to firstClicked?
+
+    // Stores the legal tiles clicked in order during a legal move.
+    private ArrayList<Tile> clickedTiles;
 
     // Constructor
     CheckerBoard(double tileWidth, double tileHeight) {
@@ -19,13 +32,14 @@ public class CheckerBoard extends Pane {
     // Currently has blackPawns on bottom.
     public void setUpBoard() {
         board = new Tile[8][8];
+        pawnClicked = false;
 
         // Populate the board with all blank tiles
         // and checkerboard background
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
 
-                Tile tile = new Tile(TILE_WIDTH, TILE_HEIGHT, board);
+                Tile tile = new Tile(TILE_WIDTH, TILE_HEIGHT, this);
                 tile.setTranslateX(col * TILE_WIDTH);
                 tile.setTranslateY(row * TILE_HEIGHT);
 
@@ -44,7 +58,7 @@ public class CheckerBoard extends Pane {
             if (row % 2 == 0)
                 col = 1;
             for (; col < 8; col += 2) {
-                board[row][col].drawPawn(Color.RED);
+                board[row][col].setPawnColor(Color.RED);
             }
         }
 
@@ -54,8 +68,26 @@ public class CheckerBoard extends Pane {
             if (row % 2 == 0)
                 col = 1;
             for (; col < 8; col += 2) {
-                board[row][col].drawPawn(Color.BLACK);
+                board[row][col].setPawnColor(Color.BLACK);
             }
         }
+    }
+
+
+    public void setPawnClicked(boolean pawnClicked){
+        this.pawnClicked = pawnClicked;
+    }
+
+    public boolean isPawnClicked() {
+        return pawnClicked;
+    }
+
+    public ArrayList<Tile> getClickedTiles() {
+        return clickedTiles;
+    }
+
+    // Used in mouseClickedEvent in Tile class
+    public void initClickedTiles(){
+        clickedTiles = new ArrayList<>();
     }
 }
